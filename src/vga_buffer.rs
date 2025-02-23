@@ -53,8 +53,11 @@ struct Buffer {
 // Writer code ---
 pub struct Writer {
     column_position: usize,
+    direction_down_to_up: bool,
     color_code: ColorCode,
     buffer: &'static mut Buffer,
+    // TODO: make "row_position: usize" that doesn't need init when creating instance of this struct,
+    //  but remembers row position
 }
 
 impl Writer {
@@ -66,7 +69,10 @@ impl Writer {
                     self.new_line();
                 }
 
-            let row : usize = BUFFER_HEIGHT - 1; // TODO: up-to-down...
+                let mut row = 0;
+                if self.direction_down_to_up == true { row = BUFFER_HEIGHT - 1; }
+                // up-to-down...
+
                 let col : usize = self.column_position;
 
                 let color_code : ColorCode = self.color_code;
@@ -88,13 +94,17 @@ impl Writer {
     }
 
     fn new_line(&mut self) {
-        for row in 1..BUFFER_HEIGHT {
-            for col in 0..BUFFER_WIDTH {
-                let character = self.buffer.chars[row][col].read();
-                self.buffer.chars[row - 1][col].write(character); // TODO: up-to-down...
+        // TODO: up-to-down...
+        if self.direction_down_to_up == true {
+            for row in 1..BUFFER_HEIGHT {
+                for col in 0..BUFFER_WIDTH {
+                    let character = self.buffer.chars[row][col].read();
+                    self.buffer.chars[row - 1][col].write(character);
+                }
             }
-        }
-        self.clear_row(BUFFER_HEIGHT - 1); // TODO: up-to-down...
+            self.clear_row(BUFFER_HEIGHT - 1);
+        } else { self.row_position += 1; }
+
         self.column_position = 0;
     }
 
@@ -123,6 +133,7 @@ pub fn test_write() {
         column_position: 0,
         color_code: ColorCode::new(Color::Yellow, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
+        direction_down_to_up: false,
     };
 
     writer.write_byte(b'H');

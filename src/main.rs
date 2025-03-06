@@ -27,7 +27,9 @@ fn panic(info: &PanicInfo) -> ! {
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     // entry point function, since the linker looks for a function named `_start` by default
-    vga_print!("Welcome to Nos OS");
+    Nos_OS::init();
+
+    vga_println!("Welcome to Nos OS");
 
     #[cfg(test)]
     test_main();

@@ -1,3 +1,9 @@
+/* No harness test, so put in Cargo.toml:
+[[test]]
+name = "stack_overflow"
+harness = false
+*/
+
 #![feature(abi_x86_interrupt)]
 #![no_std]
 #![no_main]

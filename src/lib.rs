@@ -8,11 +8,13 @@
 pub mod serial;
 pub mod vga_buffer;
 pub mod interrupt;
+pub mod gdt;
 
 use core::panic::PanicInfo;
 
 pub fn init() {
     interrupt::init_idt();
+    gdt::init();
 }
 
 pub trait Testable {

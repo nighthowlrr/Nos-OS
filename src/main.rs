@@ -6,7 +6,6 @@
 #![reexport_test_harness_main = "test_main"]
 
 use core::panic::PanicInfo;
-use Nos_OS::vga_print;
 use Nos_OS::vga_println;
 
 /// Default Panic handler. This function is called on panic.
@@ -14,7 +13,7 @@ use Nos_OS::vga_println;
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     vga_println!("{}", info);
-    loop {}
+    Nos_OS::hlt_loop();
 }
 
 /// Test mode Panic handler
@@ -34,5 +33,5 @@ pub extern "C" fn _start() -> ! {
     #[cfg(test)]
     test_main();
 
-    loop {}
+    Nos_OS::hlt_loop();
 }
